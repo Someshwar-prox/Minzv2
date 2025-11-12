@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-status-bar" content="black-translucent">
+    <title>Minz - Mobile Racing</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            background: #000;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+            padding: max(0px, env(safe-area-inset-top)) max(0px, env(safe-area-inset-right)) max(0px, env(safe-area-inset-bottom)) max(0px, env(safe-area-inset-left));
+        }
+
+        /* Splash Screen */
+        #splashScreen {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 11000;
+            flex-direction: column;
+        }
+
+        #splashScreen.hidden {
+            display: none;
+        }
+
+        .splash-logo {
+            width: 250px;
+            height: 250px;
+            margin-bottom: 30px;
+            animation: logoFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .splash-title {
+            font-size: 72px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            letter-spacing: 8px;
+        }
+
+        .splash-loading {
+            margin-top: 30px;
+            color: white;
+            font-size: 18px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Orientation Warning */
+        #orientationWarning {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #orientationWarning.show {
+            display: flex;
+        }
+
+        .rotate-icon {
+            font-size: 80px;
+            margin: 20px 0;
+            animation: rotate 2s infinite;
+        }
+
+        @keyframes rotate {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            50% {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Login Screen */
+        #loginScreen {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        #loginScreen.show {
+            display: flex;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .game-logo {
+            font-size: 56px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+
+        .game-tagline {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Countdown Overlay */
+        #countdownOverlay {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9000;
+        }
+
+        #countdownOverlay.show {
+            display: flex;
+        }
+
+        #countdownNumber {
+            font-size: 150px;
+            font-weight: bold;
+            color: #667eea;
+            text-shadow: 0 0 50px rgba(102, 126, 234, 0.8);
+            animation: countdownPulse 1s ease-in-out;
+        }
+
+        @keyframes countdownPulse {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* HUD */
+        #hud {
+            position: absolute;
+            top: max(10px, env(safe-area-inset-top));
+            left: max(10px, env(safe-area-inset-left));
+            color: white;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hud-item {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(102, 126, 234, 0.5);
+        }
+
+        /* Circular Control Wheel */
+        #controlWheel {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 200px;
+            z-index: 1000;
+        }
+
+        .control-segment {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            clip-path: polygon(50% 50%, 100% 50%, 75% 6.7%);
+            transform-origin: center;
+            transition: all 0.1s;
+        }
+
+        .control-segment:active {
+            filter: brightness(1.3);
+        }
+
+        #accelSegment {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            transform: rotate(0deg);
+            clip-path: polygon(50% 50%, 93.3% 25%, 93.3% 75%);
+        }
+
+        #brakeSegment {
+            background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
+            transform: rotate(180deg);
+            clip-path: polygon(50% 50%, 93.3% 25%, 93.3% 75%);
+        }
+
+        #leftSegment {
+            background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
+            transform: rotate(270deg);
+            clip-path: polygon(50% 50%, 93.3% 25%, 93.3% 75%);
+        }
+
+        #rightSegment {
+            background: linear-gradient(135deg, #ff9800 0%, #e65100 100%);
+            transform: rotate(90deg);
+            clip-path: polygon(50% 50%, 93.3% 25%, 93.3% 75%);
+        }
+
+        .control-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(50, 50, 50, 0.9) 0%, rgba(20, 20, 20, 0.9) 100%);
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 12px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .control-label {
+            position: absolute;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+        }
+
+        #accelLabel {
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #brakeLabel {
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #leftLabel {
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        #rightLabel {
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Speedometer */
+        #speedometer {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 4px solid #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+
+        #speedValue {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        #speedUnit {
+            font-size: 12px;
+            color: white;
+        }
+
+        /* Gear Display */
+        #gearDisplay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 3px solid rgba(102, 126, 234, 0.5);
+            text-align: center;
+        }
+
+        #gearLabel {
+            color: #aaa;
+            font-size: 12px;
+        }
+
+        #currentGear {
+            color: #667eea;
+            font-size: 48px;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(102, 126, 234, 0.7);
+        }
+
+        /* Nitro Button */
+        #nitroButton {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            border-radius: 25px;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+        }
+
+        #nitroButton:active {
+            transform: translateX(-50%) scale(0.95);
+        }
+
+        #nitroBar {
+            position: absolute;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+            border: 2px solid rgba(255, 107, 107, 0.5);
+            overflow: hidden;
+        }
+
+        #nitroFill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b 0%, #ee5a24 100%);
+            transition: width 0.3s;
+        }
+
+        /* Game Over */
+        #gameOver {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            display: none;
+            z-index: 2000;
+            min-width: 300px;
+        }
+
+        #gameOver.show {
+            display: block;
+        }
+
+        #gameOver h1 {
+            color: #ff4444;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        #gameOver p {
+            color: white;
+            font-size: 20px;
+            margin: 10px 0;
+        }
+
+        .restart-btn {
+            padding: 15px 40px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Level Complete */
+        #levelComplete {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 8000;
+            flex-direction: column;
+        }
+
+        #levelComplete.show {
+            display: flex;
+        }
+
+        .level-complete-content {
+            text-align: center;
+            color: white;
+        }
+
+        .level-complete-content h1 {
+            font-size: 48px;
+            color: #4caf50;
+            margin-bottom: 20px;
+        }
+
+        .level-complete-content p {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+
+        .reward-item {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 15px 30px;
+            margin: 10px 0;
+            font-size: 20px;
+            color: #ffd700;
+        }
+
+        .continue-btn {
+            padding: 15px 50px;
+            margin-top: 30px;
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Progress Bar */
+        #progressBar {
+            position: absolute;
+            bottom: 250px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 10px;
+            border: 2px solid rgba(102, 126, 234, 0.5);
+        }
+
+        #progressText {
+            color: white;
+            font-size: 12px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        #progressBarFill {
+            width: 0%;
+            height: 15px;
+            background: linear-gradient(90deg, #667eea 0%, #4caf50 100%);
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        /* Combo Display */
+        #comboDisplay {
+            position: absolute;
+            top: 100px;
+            left: 10px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            padding: 10px 20px;
+            border-radius: 10px;
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 18px;
+            display: none;
+        }
+
+        #comboDisplay.show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Splash Screen -->
+    <div id="splashScreen">
+        <img src="assets/logo.png" alt="Minz Logo" class="splash-logo" onerror="this.style.display='none'">
+        <div class="splash-title">MINZ</div>
+        <div class="splash-loading">Loading...</div>
+    </div>
+
+    <!-- Orientation Warning -->
+    <div id="orientationWarning">
+        <div class="rotate-icon">📱</div>
+        <h1>Please Rotate Your Device</h1>
+        <p>This game is best played in landscape mode</p>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen">
+        <div class="login-container">
+            <div class="game-logo">MINZ</div>
+            <div class="game-tagline">Ultimate Street Racing</div>
+            <input type="text" id="usernameInput" class="login-input" placeholder="Enter your racer name" maxlength="20"
+                autofocus inputmode="text">
+            <button onclick="handleLogin()" class="login-btn">START ENGINE</button>
+        </div>
+    </div>
+
+    <!-- Countdown -->
+    <div id="countdownOverlay">
+        <div id="countdownNumber">3</div>
+    </div>
+
+    <!-- Level Complete -->
+    <div id="levelComplete">
+        <div class="level-complete-content">
+            <h1>LEVEL COMPLETE!</h1>
+            <p>Level <span id="completedLevel">1</span> Finished</p>
+            <p>Score: <span id="levelScore">0</span></p>
+            <div class="reward-item">🏆 +<span id="coinReward">100</span> Coins</div>
+            <div class="reward-item">⚡ +<span id="xpReward">50</span> XP</div>
+            <button onclick="continueToNextLevel()" class="continue-btn">NEXT LEVEL</button>
+        </div>
+    </div>
+
+    <!-- HUD -->
+    <div id="hud">
+        <div class="hud-item" id="playerName"></div>
+        <div class="hud-item">SCORE: <span id="score">0</span></div>
+        <div class="hud-item">COINS: <span id="coins">0</span></div>
+        <div class="hud-item">LEVEL: <span id="level">1</span></div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div id="progressBar">
+        <div id="progressText">Level Progress: 0%</div>
+        <div id="progressBarFill"></div>
+    </div>
+
+    <!-- Combo Display -->
+    <div id="comboDisplay">
+        COMBO x<span id="comboMultiplier">1</span>
+    </div>
+
+    <!-- Nitro -->
+    <div id="nitroButton">🔥 NITRO</div>
+    <div id="nitroBar">
+        <div id="nitroFill"></div>
+    </div>
+
+    <!-- Speedometer -->
+    <div id="speedometer">
+        <div id="speedValue">0</div>
+        <div id="speedUnit">KM/H</div>
+    </div>
+
+    <!-- Gear Display -->
+    <div id="gearDisplay">
+        <div id="gearLabel">GEAR</div>
+        <div id="currentGear">N</div>
+    </div>
+
+    <!-- Circular Control Wheel -->
+    <div id="controlWheel">
+        <div id="accelSegment" class="control-segment"></div>
+        <div id="brakeSegment" class="control-segment"></div>
+        <div id="leftSegment" class="control-segment"></div>
+        <div id="rightSegment" class="control-segment"></div>
+        <div class="control-center">MINZ</div>
+        <div id="accelLabel" class="control-label">⬆</div>
+        <div id="brakeLabel" class="control-label">⬇</div>
+        <div id="leftLabel" class="control-label">⬅</div>
+        <div id="rightLabel" class="control-label">➡</div>
+    </div>
+
+    <!-- Game Over -->
+    <div id="gameOver">
+        <h1>RACE FINISHED</h1>
+        <p>Final Score: <span id="finalScore">0</span></p>
+        <p>Total Coins: <span id="finalCoins">0</span></p>
+        <p id="highScoreText"></p>
+        <button onclick="resetGame()" class="restart-btn">RACE AGAIN</button>
+    </div>
+
+    <script>
+        // Mobile detection & setup
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isTouch = () => (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
+        let userHasInteracted = false;
+
+        // Track user gesture for iOS audio autoplay
+        document.addEventListener('touchstart', () => { userHasInteracted = true; }, { once: true });
+        document.addEventListener('click', () => { userHasInteracted = true; }, { once: true });
+
+        let scene, camera, renderer;
+        let car, wheels = [];
+        let bgmAudio, crashAudio;
+        let sparkParticles = [];
+        let playerData = { username: '', highScore: 0, totalRaces: 0, coins: 0 };
+        let gameState = {
+            speed: 0,
+            maxSpeed: 2.5,
+            acceleration: 0.015,
+            braking: false,
+            steering: 0,
+            carX: 0,
+            gear: 0,
+            nitro: 100,
+            nitroActive: false,
+            obstacles: [],
+            buildings: [],
+            roadLines: [],
+            gameOver: false,
+            gameStarted: false,
+            countdownActive: false,
+            score: 0,
+            level: 1,
+            levelProgress: 0,
+            levelTarget: 300,
+            combo: 0,
+            comboTimer: 0
+        };
+
+        // Splash screen timeout
+        setTimeout(() => {
+            document.getElementById('splashScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.add('show');
+        }, 3000);
+
+        function checkOrientation() {
+            if (window.innerHeight > window.innerWidth) {
+                document.getElementById('orientationWarning').classList.add('show');
+            } else {
+                document.getElementById('orientationWarning').classList.remove('show');
+            }
+        }
+
+        window.addEventListener('orientationchange', checkOrientation);
+        window.addEventListener('resize', checkOrientation);
+
+        function handleLogin() {
+            const username = document.getElementById('usernameInput').value.trim();
+            if (!username) {
+                alert('Please enter a racer name!');
+                return;
+            }
+
+            // Vibration feedback on mobile
+            if (navigator.vibrate) {
+                navigator.vibrate(100);
+            }
+
+            // Resume audio after user gesture
+            if (bgmAudio && bgmAudio.paused) {
+                bgmAudio.play().catch(e => console.log('Audio play failed'));
+            }
+
+            playerData.username = username;
+            loadPlayerData();
+            document.getElementById('loginScreen').classList.remove('show');
+            document.getElementById('playerName').textContent = username.toUpperCase();
+            document.getElementById('coins').textContent = playerData.coins;
+            checkOrientation();
+            init();
+            startCountdown();
+        }
+
+        function loadPlayerData() {
+            try {
+                const saved = localStorage.getItem('minzMobile_' + playerData.username);
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    playerData.highScore = data.highScore || 0;
+                    playerData.totalRaces = data.totalRaces || 0;
+                    playerData.coins = data.coins || 0;
+                }
+            } catch (e) { }
+        }
+
+        function savePlayerData() {
+            try {
+                localStorage.setItem('minzMobile_' + playerData.username, JSON.stringify({
+                    highScore: playerData.highScore,
+                    totalRaces: playerData.totalRaces,
+                    coins: playerData.coins
+                }));
+            } catch (e) { }
+        }
+
+        function startCountdown() {
+            gameState.countdownActive = true;
+            gameState.gameStarted = false;
+            gameState.speed = 0;
+
+            const overlay = document.getElementById('countdownOverlay');
+            const number = document.getElementById('countdownNumber');
+            overlay.classList.add('show');
+
+            let count = 3;
+            number.textContent = count;
+            number.style.color = '#667eea';
+
+            const countInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    number.textContent = count;
+                    number.style.animation = 'none';
+                    setTimeout(() => number.style.animation = 'countdownPulse 1s ease-in-out', 10);
+                } else {
+                    number.textContent = 'GO!';
+                    number.style.color = '#4caf50';
+                    setTimeout(() => {
+                        overlay.classList.remove('show');
+                        gameState.gameStarted = true;
+                        gameState.countdownActive = false;
+                    }, 1000);
+                    clearInterval(countInterval);
+                }
+            }, 1000);
+        }
+
+        function init() {
+            bgmAudio = new Audio('assets/bgm.mp3');
+            bgmAudio.loop = true;
+            bgmAudio.volume = 0.4;
+
+            crashAudio = new Audio('assets/crash.mp3');
+            crashAudio.volume = 0.7;
+
+            // Attempt to play audio - will work if user has interacted with page
+            bgmAudio.play().catch(e => {
+                console.log('Audio autoplay blocked - will play on user interaction');
+            });
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87ceeb);
+            scene.fog = new THREE.Fog(0x87ceeb, 10, 250);
+
+            camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 500);
+            camera.position.set(0, 3, 10);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio || 1);
+            renderer.shadowMap.enabled = true;
+            document.body.appendChild(renderer.domElement); const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambient);
+
+            const sun = new THREE.DirectionalLight(0xffffff, 0.8);
+            sun.position.set(20, 50, 20);
+            sun.castShadow = true;
+            scene.add(sun);
+
+            createRoad();
+            createCar();
+            createBuildings();
+            spawnObstacles();
+            setupControls();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                checkOrientation();
+            });
+
+            animate();
+        }
+
+        function createRoad() {
+            const road = new THREE.Mesh(
+                new THREE.PlaneGeometry(15, 600),
+                new THREE.MeshStandardMaterial({ color: 0x2a2a2a })
+            );
+            road.rotation.x = -Math.PI / 2;
+            road.receiveShadow = true;
+            scene.add(road);
+
+            for (let i = -60; i < 60; i++) {
+                const line = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.4, 0.1, 4),
+                    new THREE.MeshBasicMaterial({ color: 0xffff00 })
+                );
+                line.position.set(0, 0.06, i * 10);
+                scene.add(line);
+                gameState.roadLines.push(line);
+            }
+
+            [-7, 7].forEach(x => {
+                for (let i = -60; i < 60; i++) {
+                    const edge = new THREE.Mesh(
+                        new THREE.BoxGeometry(0.5, 0.1, 2.5),
+                        new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0xff0000 : 0xffffff })
+                    );
+                    edge.position.set(x, 0.06, i * 5);
+                    scene.add(edge);
+                    gameState.roadLines.push(edge);
+                }
+            });
+        }
+
+        function createCar() {
+            const carGroup = new THREE.Group();
+
+            const body = new THREE.Mesh(
+                new THREE.BoxGeometry(2.2, 0.8, 4.5),
+                new THREE.MeshStandardMaterial({
+                    color: 0xff0000,
+                    metalness: 0.9,
+                    roughness: 0.1
+                })
+            );
+            body.position.y = 0.6;
+            body.castShadow = true;
+            carGroup.add(body);
+
+            const roof = new THREE.Mesh(
+                new THREE.BoxGeometry(2, 0.7, 2.5),
+                new THREE.MeshStandardMaterial({ color: 0xcc0000, metalness: 0.9, roughness: 0.1 })
+            );
+            roof.position.set(0, 1.1, -0.3);
+            roof.castShadow = true;
+            carGroup.add(roof);
+
+            [[-1.1, 1.5], [1.1, 1.5], [-1.1, -1.5], [1.1, -1.5]].forEach(([x, z]) => {
+                const wheel = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.45, 0.45, 0.35, 16),
+                    new THREE.MeshStandardMaterial({ color: 0x111111 })
+                );
+                wheel.rotation.z = Math.PI / 2;
+                wheel.position.set(x, 0.45, z);
+                wheel.castShadow = true;
+                carGroup.add(wheel);
+                wheels.push(wheel);
+            });
+
+            [-0.7, 0.7].forEach(x => {
+                const light = new THREE.Mesh(
+                    new THREE.CircleGeometry(0.18),
+                    new THREE.MeshBasicMaterial({ color: 0xffffff })
+                );
+                light.position.set(x, 0.65, 2.26);
+                carGroup.add(light);
+
+                const spotlight = new THREE.SpotLight(0xffffff, 3, 40, Math.PI / 7);
+                spotlight.position.set(x, 0.7, 2.5);
+                spotlight.castShadow = true;
+                carGroup.add(spotlight);
+            });
+
+            carGroup.position.set(0, 0, 5);
+            scene.add(carGroup);
+            car = carGroup;
+        }
+
+        function createSparkEffect(side) {
+            const sparkGeometry = new THREE.BufferGeometry();
+            const sparkCount = 15;
+            const positions = new Float32Array(sparkCount * 3);
+
+            for (let i = 0; i < sparkCount; i++) {
+                positions[i * 3] = car.position.x + side * 1.2;
+                positions[i * 3 + 1] = 0.2 + Math.random() * 0.5;
+                positions[i * 3 + 2] = car.position.z - 1 + Math.random() * 2;
+            }
+
+            sparkGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const sparkMaterial = new THREE.PointsMaterial({
+                color: 0xffa500,
+                size: 0.2,
+                transparent: true,
+                opacity: 1,
+                blending: THREE.AdditiveBlending
+            });
+
+            const sparks = new THREE.Points(sparkGeometry, sparkMaterial);
+            scene.add(sparks);
+
+            sparkParticles.push({
+                mesh: sparks,
+                lifetime: 0.5,
+                age: 0
+            });
+        }
+
+        function updateSparks() {
+            for (let i = sparkParticles.length - 1; i >= 0; i--) {
+                const spark = sparkParticles[i];
+                spark.age += 0.016;
+
+                spark.mesh.material.opacity = 1 - (spark.age / spark.lifetime);
+                spark.mesh.position.z += gameState.speed;
+
+                if (spark.age >= spark.lifetime) {
+                    scene.remove(spark.mesh);
+                    sparkParticles.splice(i, 1);
+                }
+            }
+        }
+
+        function createBuildings() {
+            for (let i = 0; i < 50; i++) {
+                [-1, 1].forEach(side => {
+                    const height = 12 + Math.random() * 30;
+                    const width = 4 + Math.random() * 5;
+                    const depth = 6 + Math.random() * 8;
+
+                    const building = new THREE.Mesh(
+                        new THREE.BoxGeometry(width, height, depth),
+                        new THREE.MeshStandardMaterial({
+                            color: new THREE.Color().setHSL(0.6, 0.2, 0.35 + Math.random() * 0.25)
+                        })
+                    );
+                    building.position.set(
+                        side * (14 + Math.random() * 6),
+                        height / 2,
+                        -300 + i * 15
+                    );
+                    building.castShadow = true;
+                    scene.add(building);
+                    gameState.buildings.push(building);
+
+                    for (let h = 2; h < height; h += 3) {
+                        for (let w = 0; w < 3; w++) {
+                            const window = new THREE.Mesh(
+                                new THREE.PlaneGeometry(0.7, 1.4),
+                                new THREE.MeshBasicMaterial({
+                                    color: Math.random() > 0.3 ? 0xffff99 : 0x222222
+                                })
+                            );
+                            window.position.set(
+                                building.position.x + (side > 0 ? -width / 2 - 0.01 : width / 2 + 0.01),
+                                building.position.y - height / 2 + h,
+                                building.position.z + (w - 1) * 2
+                            );
+                            window.rotation.y = side > 0 ? Math.PI / 2 : -Math.PI / 2;
+                            scene.add(window);
+                        }
+                    }
+                });
+            }
+        }
+
+        function spawnObstacles() {
+            for (let i = 0; i < 8; i++) {
+                createObstacle(-30 - i * 30);
+            }
+        }
+
+        function createObstacle(z) {
+            const colors = [0x2196f3, 0x4caf50, 0xffeb3b, 0xff5722, 0x9c27b0, 0x00bcd4];
+            const obstacleGroup = new THREE.Group();
+
+            const body = new THREE.Mesh(
+                new THREE.BoxGeometry(2, 1, 4),
+                new THREE.MeshStandardMaterial({
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    metalness: 0.8,
+                    roughness: 0.2
+                })
+            );
+            body.position.y = 0.5;
+            body.castShadow = true;
+            obstacleGroup.add(body);
+
+            const roof = new THREE.Mesh(
+                new THREE.BoxGeometry(1.8, 0.7, 2),
+                new THREE.MeshStandardMaterial({ color: 0x333333 })
+            );
+            roof.position.set(0, 1.2, -0.3);
+            roof.castShadow = true;
+            obstacleGroup.add(roof);
+
+            const lane = (Math.floor(Math.random() * 3) - 1) * 4;
+            obstacleGroup.position.set(lane, 0, z);
+            scene.add(obstacleGroup);
+            gameState.obstacles.push(obstacleGroup);
+        }
+
+        function setupControls() {
+            const accelSegment = document.getElementById('accelSegment');
+            const brakeSegment = document.getElementById('brakeSegment');
+            const leftSegment = document.getElementById('leftSegment');
+            const rightSegment = document.getElementById('rightSegment');
+            const nitroButton = document.getElementById('nitroButton');
+
+            function startControl(control) {
+                return (e) => {
+                    e.preventDefault();
+                    if (control === 'accel') gameState.braking = false;
+                    else if (control === 'brake') gameState.braking = true;
+                    else if (control === 'left') gameState.steering = -1;
+                    else if (control === 'right') gameState.steering = 1;
+                    else if (control === 'nitro' && gameState.nitro > 0 && gameState.gameStarted) {
+                        gameState.nitroActive = true;
+                        if (navigator.vibrate) navigator.vibrate(50);
+                    }
+                };
+            }
+
+            function stopControl(control) {
+                return (e) => {
+                    e.preventDefault();
+                    if (control === 'brake') gameState.braking = false;
+                    else if (control === 'left' || control === 'right') gameState.steering = 0;
+                    else if (control === 'nitro') gameState.nitroActive = false;
+                };
+            }
+
+            accelSegment.addEventListener('touchstart', startControl('accel'), { passive: false });
+            accelSegment.addEventListener('mousedown', startControl('accel'), { passive: false });
+            brakeSegment.addEventListener('touchstart', startControl('brake'), { passive: false });
+            brakeSegment.addEventListener('mousedown', startControl('brake'), { passive: false });
+            brakeSegment.addEventListener('touchend', stopControl('brake'), { passive: false });
+            brakeSegment.addEventListener('mouseup', stopControl('brake'), { passive: false });
+            leftSegment.addEventListener('touchstart', startControl('left'), { passive: false });
+            leftSegment.addEventListener('mousedown', startControl('left'), { passive: false });
+            leftSegment.addEventListener('touchend', stopControl('left'), { passive: false });
+            leftSegment.addEventListener('mouseup', stopControl('left'), { passive: false });
+            rightSegment.addEventListener('touchstart', startControl('right'), { passive: false });
+            rightSegment.addEventListener('mousedown', startControl('right'), { passive: false });
+            rightSegment.addEventListener('touchend', stopControl('right'), { passive: false });
+            rightSegment.addEventListener('mouseup', stopControl('right'), { passive: false });
+            nitroButton.addEventListener('touchstart', startControl('nitro'), { passive: false });
+            nitroButton.addEventListener('mousedown', startControl('nitro'), { passive: false });
+            nitroButton.addEventListener('touchend', stopControl('nitro'), { passive: false });
+            nitroButton.addEventListener('mouseup', stopControl('nitro'), { passive: false });
+        }
+
+        function updateGear() {
+            const speed = gameState.speed * 100;
+            if (!gameState.gameStarted || speed < 5) {
+                gameState.gear = 0;
+                document.getElementById('currentGear').textContent = 'N';
+            } else if (speed < 50) {
+                gameState.gear = 1;
+                document.getElementById('currentGear').textContent = '1';
+            } else if (speed < 100) {
+                gameState.gear = 2;
+                document.getElementById('currentGear').textContent = '2';
+            } else if (speed < 150) {
+                gameState.gear = 3;
+                document.getElementById('currentGear').textContent = '3';
+            } else if (speed < 200) {
+                gameState.gear = 4;
+                document.getElementById('currentGear').textContent = '4';
+            } else {
+                gameState.gear = 5;
+                document.getElementById('currentGear').textContent = '5';
+            }
+        }
+
+        function updateCombo() {
+            if (gameState.combo > 0) {
+                gameState.comboTimer += 0.016;
+                if (gameState.comboTimer > 3) {
+                    gameState.combo = 0;
+                    document.getElementById('comboDisplay').classList.remove('show');
+                }
+            }
+        }
+
+        function addCombo() {
+            gameState.combo++;
+            gameState.comboTimer = 0;
+            document.getElementById('comboMultiplier').textContent = gameState.combo;
+            document.getElementById('comboDisplay').classList.add('show');
+        }
+
+        function updateLevelProgress() {
+            const progress = (gameState.score / gameState.levelTarget) * 100;
+            gameState.levelProgress = Math.min(progress, 100);
+            document.getElementById('progressBarFill').style.width = gameState.levelProgress + '%';
+            document.getElementById('progressText').textContent = `Level Progress: ${Math.floor(gameState.levelProgress)}%`;
+
+            if (gameState.levelProgress >= 100) {
+                completeLevel();
+            }
+        }
+
+        function completeLevel() {
+            gameState.gameStarted = false;
+            gameState.countdownActive = false;
+            gameState.speed = 0;
+
+            const coinReward = gameState.level * 100;
+            const xpReward = gameState.level * 50;
+
+            playerData.coins += coinReward;
+            document.getElementById('coins').textContent = playerData.coins;
+
+            document.getElementById('completedLevel').textContent = gameState.level;
+            document.getElementById('levelScore').textContent = gameState.score;
+            document.getElementById('coinReward').textContent = coinReward;
+            document.getElementById('xpReward').textContent = xpReward;
+            document.getElementById('levelComplete').classList.add('show');
+
+            savePlayerData();
+        }
+
+        function continueToNextLevel() {
+            document.getElementById('levelComplete').classList.remove('show');
+
+            gameState.level++;
+            gameState.levelProgress = 0;
+            gameState.levelTarget = 300 + (gameState.level - 1) * 200;
+            gameState.maxSpeed = Math.min(2.5 + (gameState.level - 1) * 0.2, 4);
+            gameState.carX = 0;
+            car.position.x = 0;
+
+            document.getElementById('level').textContent = gameState.level;
+
+            gameState.obstacles.forEach(obs => {
+                const lane = (Math.floor(Math.random() * 3) - 1) * 4;
+                obs.position.x = lane;
+                obs.position.z = -30 - Math.random() * 200;
+            });
+
+            startCountdown();
+        }
+
+        function resetGame() {
+            document.getElementById('gameOver').classList.remove('show');
+
+            gameState.gameOver = false;
+            gameState.speed = 0;
+            gameState.score = 0;
+            gameState.level = 1;
+            gameState.carX = 0;
+            gameState.gear = 0;
+            gameState.nitro = 100;
+            gameState.levelProgress = 0;
+            gameState.levelTarget = 300;
+            gameState.combo = 0;
+            car.position.x = 0;
+
+            playerData.totalRaces++;
+            savePlayerData();
+
+            document.getElementById('score').textContent = '0';
+            document.getElementById('level').textContent = '1';
+            document.getElementById('speedValue').textContent = '0';
+            document.getElementById('progressBarFill').style.width = '0%';
+
+            gameState.obstacles.forEach(obs => {
+                const lane = (Math.floor(Math.random() * 3) - 1) * 4;
+                obs.position.x = lane;
+                obs.position.z = -30 - Math.random() * 200;
+            });
+
+            startCountdown();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (gameState.gameOver) {
+                renderer.render(scene, camera);
+                return;
+            }
+
+            if (gameState.countdownActive || !gameState.gameStarted) {
+                renderer.render(scene, camera);
+                return;
+            }
+
+            // Speed control
+            if (!gameState.braking) {
+                let maxSpeed = gameState.maxSpeed;
+                if (gameState.nitroActive && gameState.nitro > 0) {
+                    maxSpeed = gameState.maxSpeed * 1.6;
+                    gameState.nitro = Math.max(0, gameState.nitro - 0.5);
+                } else {
+                    gameState.nitro = Math.min(100, gameState.nitro + 0.1);
+                }
+                gameState.speed = Math.min(gameState.speed + gameState.acceleration, maxSpeed);
+            } else {
+                gameState.speed = Math.max(gameState.speed - 0.08, 0);
+            }
+
+            document.getElementById('nitroFill').style.width = gameState.nitro + '%';
+
+            // Steering
+            gameState.carX += gameState.steering * 0.3;
+            gameState.carX = Math.max(-5.5, Math.min(5.5, gameState.carX));
+            car.position.x = gameState.carX;
+            car.rotation.y = -gameState.steering * 0.15;
+
+            // Spark effects when near edge
+            if (Math.abs(gameState.carX) > 5 && gameState.speed > 0.5) {
+                if (Math.random() < 0.3) {
+                    createSparkEffect(gameState.carX > 0 ? 1 : -1);
+                }
+            }
+
+            updateSparks();
+            updateGear();
+            updateCombo();
+            updateLevelProgress();
+
+            wheels.forEach(w => w.rotation.x -= gameState.speed * 0.4);
+
+            gameState.roadLines.forEach(line => {
+                line.position.z += gameState.speed;
+                if (line.position.z > 60) line.position.z -= 120;
+            });
+
+            gameState.buildings.forEach(b => {
+                b.position.z += gameState.speed;
+                if (b.position.z > 60) b.position.z -= 750;
+            });
+
+            gameState.obstacles.forEach(obs => {
+                obs.position.z += gameState.speed + 0.5;
+
+                if (obs.position.z > 20) {
+                    obs.position.z = -200;
+                    const lane = (Math.floor(Math.random() * 3) - 1) * 4;
+                    obs.position.x = lane;
+
+                    const baseScore = 15;
+                    const comboScore = baseScore * (gameState.combo + 1);
+                    gameState.score += comboScore;
+                    document.getElementById('score').textContent = gameState.score;
+
+                    addCombo();
+
+                    if (gameState.score > playerData.highScore) {
+                        playerData.highScore = gameState.score;
+                        savePlayerData();
+                    }
+                }
+
+                const dx = car.position.x - obs.position.x;
+                const dz = car.position.z - obs.position.z;
+                if (Math.sqrt(dx * dx + dz * dz) < 3.2) {
+                    gameState.gameOver = true;
+                    gameState.gameStarted = false;
+                    gameState.speed = 0;
+
+                    // Vibration feedback on crash
+                    if (navigator.vibrate) {
+                        navigator.vibrate([100, 50, 100]);
+                    }
+
+                    bgmAudio.pause();
+                    crashAudio.currentTime = 0;
+                    crashAudio.play();
+                    crashAudio.onended = () => bgmAudio.play();
+
+                    document.getElementById('finalScore').textContent = gameState.score;
+                    document.getElementById('finalCoins').textContent = playerData.coins;
+                    document.getElementById('highScoreText').textContent =
+                        gameState.score >= playerData.highScore ? 'NEW RECORD!' : 'Best: ' + playerData.highScore;
+                    document.getElementById('gameOver').classList.add('show');
+                }
+            });
+
+            document.getElementById('speedValue').textContent = Math.round(gameState.speed * 100);
+
+            camera.position.x += (car.position.x - camera.position.x) * 0.1;
+            camera.position.z = car.position.z + 10;
+            camera.lookAt(car.position.x, car.position.y + 1, car.position.z - 15);
+
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+
+</html>
