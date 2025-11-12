@@ -630,34 +630,6 @@
             cursor: pointer;
         }
 
-        /* Progress Bar */
-        #progressBar {
-            position: absolute;
-            bottom: 120px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 300px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            padding: 10px;
-            border: 2px solid rgba(102, 126, 234, 0.5);
-        }
-
-        #progressText {
-            color: white;
-            font-size: 12px;
-            margin-bottom: 5px;
-            text-align: center;
-        }
-
-        #progressBarFill {
-            width: 0%;
-            height: 15px;
-            background: linear-gradient(90deg, #667eea 0%, #4caf50 100%);
-            border-radius: 5px;
-            transition: width 0.3s;
-        }
-
         /* Combo Display */
         #comboDisplay {
             position: absolute;
@@ -675,6 +647,225 @@
 
         #comboDisplay.show {
             display: block;
+        }
+
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 768px) {
+
+            /* HUD - Stack vertically for smaller screens */
+            #hud {
+                top: max(10px, env(safe-area-inset-top));
+                left: max(10px, env(safe-area-inset-left));
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .hud-item {
+                padding: 5px 10px;
+                font-size: 12px;
+            }
+
+            /* Smaller buttons for small screens */
+            #leftButton,
+            #rightButton {
+                width: 70px;
+                height: 70px;
+                font-size: 28px;
+                bottom: 15px;
+            }
+
+            #leftButton {
+                left: 15px;
+            }
+
+            #rightButton {
+                right: 15px;
+            }
+
+            #accelButton {
+                width: 100px;
+                height: 70px;
+                font-size: 28px;
+                bottom: 15px;
+            }
+
+            /* Speedometer - smaller */
+            #speedometer {
+                width: 100px;
+                height: 100px;
+                bottom: 15px;
+                right: 15px;
+                border: 3px solid #667eea;
+            }
+
+            #speedValue {
+                font-size: 28px;
+            }
+
+            #speedUnit {
+                font-size: 10px;
+            }
+
+            /* Gear display - smaller */
+            #gearDisplay {
+                top: max(10px, env(safe-area-inset-top));
+                right: max(10px, env(safe-area-inset-right));
+                padding: 10px 15px;
+                border: 2px solid rgba(102, 126, 234, 0.5);
+            }
+
+            #gearLabel {
+                font-size: 10px;
+            }
+
+            #currentGear {
+                font-size: 36px;
+            }
+
+            /* Nitro bar - smaller */
+            #nitroBar {
+                width: 120px;
+                height: 12px;
+                top: 75px;
+            }
+
+            /* Nitro button - smaller */
+            #nitroButton {
+                width: 80px;
+                height: 40px;
+                font-size: 14px;
+            }
+
+            /* Combo display - adjust position */
+            #comboDisplay {
+                top: 80px;
+                left: max(10px, env(safe-area-inset-left));
+                font-size: 16px;
+                padding: 8px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            /* Extra small screens */
+            #hud {
+                flex-direction: row;
+                gap: 3px;
+                flex-wrap: wrap;
+            }
+
+            .hud-item {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+
+            #leftButton,
+            #rightButton {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+                bottom: 10px;
+            }
+
+            #leftButton {
+                left: 10px;
+            }
+
+            #rightButton {
+                right: 10px;
+            }
+
+            #accelButton {
+                width: 90px;
+                height: 60px;
+                font-size: 24px;
+                bottom: 10px;
+            }
+
+            #speedometer {
+                width: 90px;
+                height: 90px;
+                bottom: 10px;
+                right: 10px;
+                border: 2px solid #667eea;
+            }
+
+            #speedValue {
+                font-size: 24px;
+            }
+
+            #speedUnit {
+                font-size: 9px;
+            }
+
+            #gearDisplay {
+                top: max(8px, env(safe-area-inset-top));
+                right: max(8px, env(safe-area-inset-right));
+                padding: 8px 12px;
+            }
+
+            #gearLabel {
+                font-size: 9px;
+            }
+
+            #currentGear {
+                font-size: 32px;
+            }
+
+            #nitroButton {
+                width: 70px;
+                height: 35px;
+                font-size: 12px;
+            }
+
+            #nitroBar {
+                width: 100px;
+                height: 10px;
+                top: 70px;
+            }
+
+            #comboDisplay {
+                top: 70px;
+                left: max(8px, env(safe-area-inset-left));
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+
+            /* Large screens - expand UI */
+            #leftButton,
+            #rightButton {
+                width: 100px;
+                height: 100px;
+                font-size: 36px;
+            }
+
+            #accelButton {
+                width: 140px;
+                height: 100px;
+                font-size: 32px;
+            }
+
+            #speedometer {
+                width: 140px;
+                height: 140px;
+                bottom: 30px;
+                right: 30px;
+            }
+
+            #speedValue {
+                font-size: 48px;
+            }
+
+            #gearDisplay {
+                padding: 20px 30px;
+            }
+
+            #currentGear {
+                font-size: 56px;
+            }
         }
     </style>
 </head>
@@ -728,12 +919,7 @@
         <div class="hud-item">SCORE: <span id="score">0</span></div>
         <div class="hud-item">COINS: <span id="coins">0</span></div>
         <div class="hud-item">LEVEL: <span id="level">1</span></div>
-    </div>
-
-    <!-- Progress Bar -->
-    <div id="progressBar">
-        <div id="progressText">Level Progress: 0%</div>
-        <div id="progressBarFill"></div>
+        <div class="hud-item" id="gyroStatus">📱 GYRO: OFF</div>
     </div>
 
     <!-- Combo Display -->
@@ -1230,60 +1416,71 @@
                         .then(permissionState => {
                             if (permissionState === 'granted') {
                                 gyroEnabled = true;
-                                window.addEventListener('deviceorientation', handleDeviceOrientation);
+                                window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+                                document.getElementById('gyroStatus').textContent = '📱 GYRO: ON';
                                 if (navigator.vibrate) navigator.vibrate(100);
-                                console.log('✅ Gyroscope enabled');
+                                console.log('✅ Gyroscope enabled on iOS');
+                            } else {
+                                document.getElementById('gyroStatus').textContent = '📱 GYRO: DENIED';
+                                console.log('❌ Gyroscope permission denied');
                             }
                         })
-                        .catch(console.error);
+                        .catch(err => {
+                            document.getElementById('gyroStatus').textContent = '📱 GYRO: ERROR';
+                            console.error('Gyroscope error:', err);
+                        });
                 } else if (typeof DeviceOrientationEvent !== 'undefined') {
                     // Android doesn't require permission
                     gyroEnabled = true;
-                    window.addEventListener('deviceorientation', handleDeviceOrientation);
+                    window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+                    document.getElementById('gyroStatus').textContent = '📱 GYRO: ON';
                     if (navigator.vibrate) navigator.vibrate(100);
-                    console.log('✅ Gyroscope enabled');
+                    console.log('✅ Gyroscope enabled on Android');
+                } else {
+                    document.getElementById('gyroStatus').textContent = '📱 GYRO: N/A';
+                    console.log('⚠️ DeviceOrientation not supported on this device');
                 }
             }
 
             function handleDeviceOrientation(event) {
                 if (!gameState.gameStarted) return;
 
-                const alpha = event.alpha || 0; // Z axis (0-360)
-                const beta = event.beta || 0;   // X axis (-180 to 180)
-                const gamma = event.gamma || 0; // Y axis (-90 to 90)
+                const alpha = event.alpha || 0; // Z axis rotation (0-360)
+                const beta = event.beta || 0;   // X axis front-back tilt (-180 to 180)
+                const gamma = event.gamma || 0; // Y axis left-right tilt (-90 to 90)
+
+                console.log(`Gyro - Alpha: ${alpha.toFixed(1)}, Beta: ${beta.toFixed(1)}, Gamma: ${gamma.toFixed(1)}`);
 
                 // Use gamma (left-right tilt) for steering
                 // Negative gamma = tilt left, Positive gamma = tilt right
-                const tiltThreshold = 15; // Dead zone
-                const maxTilt = 45; // Maximum tilt angle
+                const tiltThreshold = 8; // Dead zone - very sensitive
+                const maxTilt = 25; // Maximum tilt angle
 
                 if (Math.abs(gamma) > tiltThreshold) {
                     // Normalize tilt to -1 to 1 range
                     const tiltFactor = Math.max(-1, Math.min(1, gamma / maxTilt));
                     gameState.steering = tiltFactor;
+                    console.log(`Steering from gyro: ${tiltFactor.toFixed(2)}`);
                 } else {
                     gameState.steering = 0;
                 }
-
-                // Optional: Use beta for forward/backward (tilt up/down)
-                // You can add acceleration based on beta if desired
             }
 
-            // Brake Button (hold accelerate + tilt for braking - or add separate button)
-            // For now, brake is done by releasing accelerate or tilt down
+            // Request gyroscope permission immediately
+            requestPermission();
 
-            // Request gyroscope permission on first user interaction
+            // Also request on any user interaction (fallback)
             document.addEventListener('touchstart', () => {
-                if (!gyroEnabled && gameState.gameStarted) {
+                if (!gyroEnabled) {
                     requestPermission();
                 }
-            }, { once: false });
+            }, { passive: true });
 
             document.addEventListener('click', () => {
-                if (!gyroEnabled && gameState.gameStarted) {
+                if (!gyroEnabled) {
                     requestPermission();
                 }
-            }, { once: false });
+            }, { passive: true });
         }
 
         function updateGear() {
@@ -1329,8 +1526,6 @@
         function updateLevelProgress() {
             const progress = (gameState.score / gameState.levelTarget) * 100;
             gameState.levelProgress = Math.min(progress, 100);
-            document.getElementById('progressBarFill').style.width = gameState.levelProgress + '%';
-            document.getElementById('progressText').textContent = `Level Progress: ${Math.floor(gameState.levelProgress)}%`;
 
             if (gameState.levelProgress >= 100) {
                 completeLevel();
@@ -1399,7 +1594,6 @@
             document.getElementById('score').textContent = '0';
             document.getElementById('level').textContent = '1';
             document.getElementById('speedValue').textContent = '0';
-            document.getElementById('progressBarFill').style.width = '0%';
 
             gameState.obstacles.forEach(obs => {
                 const lane = (Math.floor(Math.random() * 3) - 1) * 4;

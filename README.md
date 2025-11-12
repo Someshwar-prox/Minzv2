@@ -82,10 +82,15 @@ python -m http.server 8000
 
 ### 🕹️ **Controls**
 - **Circular Control Wheel (Bottom)** — Touch-based controls
-  - **⬆ (Top)** — Accelerate
-  - **⬇ (Bottom)** — Brake
-  - **⬅ (Left)** — Steer Left
-  - **➡ (Right)** — Steer Right
+  - **⬆ (Center)** — Accelerate
+  - **⬅ (Left)** — Steer Left (Touch)
+  - **➡ (Right)** — Steer Right (Touch)
+
+- **📱 Device Tilt (Gyroscope)** — Tilt phone to steer
+  - **Tilt LEFT** → Car moves LEFT
+  - **Tilt RIGHT** → Car moves RIGHT
+  - Works on Android 8+ and iOS 13+
+  - See `GYROSCOPE_GUIDE.md` for troubleshooting
 
 - **🔥 Nitro Button (Top Center)** — Activate turbo boost
   - Requires nitro energy (recharges automatically)
