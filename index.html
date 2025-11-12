@@ -267,10 +267,10 @@
         #controlWheel {
             position: absolute;
             bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 200px;
+            left: 20px;
+            transform: none;
+            width: 180px;
+            height: 180px;
             z-index: 1000;
         }
 
@@ -439,6 +439,79 @@
             transform: translateX(-50%) scale(0.95);
         }
 
+        /* Accelerate Button (Bottom Center) */
+        #accelButton {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 80px;
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            border-radius: 15px;
+            border: 3px solid rgba(76, 175, 80, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 32px;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+            z-index: 1000;
+        }
+
+        #accelButton:active {
+            transform: translateX(-50%) scale(0.95);
+        }
+
+        /* Left Move Button */
+        #leftButton {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
+            border-radius: 50%;
+            border: 3px solid rgba(33, 150, 243, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 32px;
+            box-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
+            z-index: 1000;
+        }
+
+        #leftButton:active {
+            transform: scale(0.95);
+        }
+
+        /* Right Move Button */
+        #rightButton {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff9800 0%, #e65100 100%);
+            border-radius: 50%;
+            border: 3px solid rgba(255, 152, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 32px;
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
+            z-index: 1000;
+        }
+
+        #rightButton:active {
+            transform: scale(0.95);
+        }
+
         #nitroBar {
             position: absolute;
             top: 75px;
@@ -560,7 +633,7 @@
         /* Progress Bar */
         #progressBar {
             position: absolute;
-            bottom: 250px;
+            bottom: 120px;
             left: 50%;
             transform: translateX(-50%);
             width: 300px;
@@ -686,8 +759,8 @@
         <div id="currentGear">N</div>
     </div>
 
-    <!-- Circular Control Wheel -->
-    <div id="controlWheel">
+    <!-- Circular Control Wheel (Hidden - kept for reference) -->
+    <div id="controlWheel" style="display: none;">
         <div id="accelSegment" class="control-segment"></div>
         <div id="brakeSegment" class="control-segment"></div>
         <div id="leftSegment" class="control-segment"></div>
@@ -698,6 +771,11 @@
         <div id="leftLabel" class="control-label">⬅</div>
         <div id="rightLabel" class="control-label">➡</div>
     </div>
+
+    <!-- New Reorganized Controls -->
+    <div id="leftButton">⬅</div>
+    <div id="accelButton">⬆ ACCEL</div>
+    <div id="rightButton">➡</div>
 
     <!-- Game Over -->
     <div id="gameOver">
@@ -1105,17 +1183,19 @@
         }
 
         function setupControls() {
-            const accelSegment = document.getElementById('accelSegment');
-            const brakeSegment = document.getElementById('brakeSegment');
-            const leftSegment = document.getElementById('leftSegment');
-            const rightSegment = document.getElementById('rightSegment');
+            const leftButton = document.getElementById('leftButton');
+            const accelButton = document.getElementById('accelButton');
+            const rightButton = document.getElementById('rightButton');
             const nitroButton = document.getElementById('nitroButton');
 
-            function startControl(control) {
-                return (e) => {
+            let gyroEnabled = false;
+            let gyroAlpha = 0; // Tilt intensity
+
+            // Touch/Mouse Controls for Buttons
+            function setupButtonControl(button, control) {
+                const startHandler = (e) => {
                     e.preventDefault();
                     if (control === 'accel') gameState.braking = false;
-                    else if (control === 'brake') gameState.braking = true;
                     else if (control === 'left') gameState.steering = -1;
                     else if (control === 'right') gameState.steering = 1;
                     else if (control === 'nitro' && gameState.nitro > 0 && gameState.gameStarted) {
@@ -1123,35 +1203,87 @@
                         if (navigator.vibrate) navigator.vibrate(50);
                     }
                 };
-            }
 
-            function stopControl(control) {
-                return (e) => {
+                const endHandler = (e) => {
                     e.preventDefault();
-                    if (control === 'brake') gameState.braking = false;
-                    else if (control === 'left' || control === 'right') gameState.steering = 0;
+                    if (control === 'left' || control === 'right') gameState.steering = 0;
                     else if (control === 'nitro') gameState.nitroActive = false;
                 };
+
+                button.addEventListener('touchstart', startHandler, { passive: false });
+                button.addEventListener('mousedown', startHandler, { passive: false });
+                button.addEventListener('touchend', endHandler, { passive: false });
+                button.addEventListener('mouseup', endHandler, { passive: false });
+                button.addEventListener('touchcancel', endHandler, { passive: false });
             }
 
-            accelSegment.addEventListener('touchstart', startControl('accel'), { passive: false });
-            accelSegment.addEventListener('mousedown', startControl('accel'), { passive: false });
-            brakeSegment.addEventListener('touchstart', startControl('brake'), { passive: false });
-            brakeSegment.addEventListener('mousedown', startControl('brake'), { passive: false });
-            brakeSegment.addEventListener('touchend', stopControl('brake'), { passive: false });
-            brakeSegment.addEventListener('mouseup', stopControl('brake'), { passive: false });
-            leftSegment.addEventListener('touchstart', startControl('left'), { passive: false });
-            leftSegment.addEventListener('mousedown', startControl('left'), { passive: false });
-            leftSegment.addEventListener('touchend', stopControl('left'), { passive: false });
-            leftSegment.addEventListener('mouseup', stopControl('left'), { passive: false });
-            rightSegment.addEventListener('touchstart', startControl('right'), { passive: false });
-            rightSegment.addEventListener('mousedown', startControl('right'), { passive: false });
-            rightSegment.addEventListener('touchend', stopControl('right'), { passive: false });
-            rightSegment.addEventListener('mouseup', stopControl('right'), { passive: false });
-            nitroButton.addEventListener('touchstart', startControl('nitro'), { passive: false });
-            nitroButton.addEventListener('mousedown', startControl('nitro'), { passive: false });
-            nitroButton.addEventListener('touchend', stopControl('nitro'), { passive: false });
-            nitroButton.addEventListener('mouseup', stopControl('nitro'), { passive: false });
+            setupButtonControl(leftButton, 'left');
+            setupButtonControl(accelButton, 'accel');
+            setupButtonControl(rightButton, 'right');
+            setupButtonControl(nitroButton, 'nitro');
+
+            // Gyroscope/Device Tilt Controls
+            function requestPermission() {
+                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    // iOS 13+ requires explicit permission
+                    DeviceOrientationEvent.requestPermission()
+                        .then(permissionState => {
+                            if (permissionState === 'granted') {
+                                gyroEnabled = true;
+                                window.addEventListener('deviceorientation', handleDeviceOrientation);
+                                if (navigator.vibrate) navigator.vibrate(100);
+                                console.log('✅ Gyroscope enabled');
+                            }
+                        })
+                        .catch(console.error);
+                } else if (typeof DeviceOrientationEvent !== 'undefined') {
+                    // Android doesn't require permission
+                    gyroEnabled = true;
+                    window.addEventListener('deviceorientation', handleDeviceOrientation);
+                    if (navigator.vibrate) navigator.vibrate(100);
+                    console.log('✅ Gyroscope enabled');
+                }
+            }
+
+            function handleDeviceOrientation(event) {
+                if (!gameState.gameStarted) return;
+
+                const alpha = event.alpha || 0; // Z axis (0-360)
+                const beta = event.beta || 0;   // X axis (-180 to 180)
+                const gamma = event.gamma || 0; // Y axis (-90 to 90)
+
+                // Use gamma (left-right tilt) for steering
+                // Negative gamma = tilt left, Positive gamma = tilt right
+                const tiltThreshold = 15; // Dead zone
+                const maxTilt = 45; // Maximum tilt angle
+
+                if (Math.abs(gamma) > tiltThreshold) {
+                    // Normalize tilt to -1 to 1 range
+                    const tiltFactor = Math.max(-1, Math.min(1, gamma / maxTilt));
+                    gameState.steering = tiltFactor;
+                } else {
+                    gameState.steering = 0;
+                }
+
+                // Optional: Use beta for forward/backward (tilt up/down)
+                // You can add acceleration based on beta if desired
+            }
+
+            // Brake Button (hold accelerate + tilt for braking - or add separate button)
+            // For now, brake is done by releasing accelerate or tilt down
+
+            // Request gyroscope permission on first user interaction
+            document.addEventListener('touchstart', () => {
+                if (!gyroEnabled && gameState.gameStarted) {
+                    requestPermission();
+                }
+            }, { once: false });
+
+            document.addEventListener('click', () => {
+                if (!gyroEnabled && gameState.gameStarted) {
+                    requestPermission();
+                }
+            }, { once: false });
         }
 
         function updateGear() {
