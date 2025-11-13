@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#667eea">
-    <meta name="apple-mobile-web-app-status-bar" content="black-translucent">
     <title>Minz - Mobile Racing</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
@@ -18,27 +15,25 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
+            -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
         }
 
-        body {
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
-            background: #000;
-            position: fixed;
+        html, body {
             width: 100%;
             height: 100%;
+            overflow: hidden;
+            position: fixed;
+            font-family: Arial, sans-serif;
+            background: #000;
             touch-action: none;
-            padding: max(0px, env(safe-area-inset-top)) max(0px, env(safe-area-inset-right)) max(0px, env(safe-area-inset-bottom)) max(0px, env(safe-area-inset-left));
         }
 
         /* Splash Screen */
         #splashScreen {
             position: fixed;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             justify-content: center;
@@ -47,61 +42,43 @@
             flex-direction: column;
         }
 
-        #splashScreen.hidden {
-            display: none;
-        }
+        #splashScreen.hidden { display: none; }
 
         .splash-logo {
-            width: 250px;
-            height: 250px;
-            margin-bottom: 30px;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 20px;
             animation: logoFloat 2s ease-in-out infinite;
         }
 
         @keyframes logoFloat {
-
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-20px);
-            }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
         }
 
         .splash-title {
-            font-size: 72px;
+            font-size: 48px;
             font-weight: bold;
             color: white;
-            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-            letter-spacing: 8px;
+            letter-spacing: 6px;
         }
 
         .splash-loading {
-            margin-top: 30px;
+            margin-top: 20px;
             color: white;
-            font-size: 18px;
-            animation: pulse 1.5s ease-in-out infinite;
+            font-size: 16px;
+            animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 0.5;
-            }
-
-            50% {
-                opacity: 1;
-            }
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
         /* Orientation Warning */
         #orientationWarning {
             position: fixed;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: none;
             justify-content: center;
@@ -113,33 +90,23 @@
             padding: 20px;
         }
 
-        #orientationWarning.show {
-            display: flex;
-        }
+        #orientationWarning.show { display: flex; }
 
         .rotate-icon {
-            font-size: 80px;
-            margin: 20px 0;
+            font-size: 60px;
+            margin: 15px 0;
             animation: rotate 2s infinite;
         }
 
         @keyframes rotate {
-
-            0%,
-            100% {
-                transform: rotate(0deg);
-            }
-
-            50% {
-                transform: rotate(90deg);
-            }
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(90deg); }
         }
 
         /* Login Screen */
         #loginScreen {
             position: fixed;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: none;
             justify-content: center;
@@ -147,65 +114,60 @@
             z-index: 10000;
         }
 
-        #loginScreen.show {
-            display: flex;
-        }
+        #loginScreen.show { display: flex; }
 
         .login-container {
             background: rgba(255, 255, 255, 0.95);
-            padding: 40px 30px;
-            border-radius: 20px;
+            padding: 30px 25px;
+            border-radius: 15px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             text-align: center;
-            max-width: 400px;
             width: 90%;
+            max-width: 350px;
         }
 
         .game-logo {
-            font-size: 56px;
+            font-size: 42px;
             font-weight: bold;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
-            background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             letter-spacing: 3px;
         }
 
         .game-tagline {
             color: #666;
-            font-size: 14px;
-            margin-bottom: 25px;
+            font-size: 13px;
+            margin-bottom: 20px;
             font-style: italic;
         }
 
         .login-input {
             width: 100%;
-            padding: 15px;
-            margin: 10px 0;
+            padding: 12px;
+            margin: 8px 0;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 15px;
         }
 
         .login-btn {
             width: 100%;
-            padding: 15px;
-            margin: 20px 0;
+            padding: 12px;
+            margin: 15px 0;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 18px;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: bold;
-            cursor: pointer;
         }
 
-        /* Countdown Overlay */
+        /* Countdown */
         #countdownOverlay {
             position: fixed;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0, 0, 0, 0.9);
             display: none;
             justify-content: center;
@@ -213,12 +175,10 @@
             z-index: 9000;
         }
 
-        #countdownOverlay.show {
-            display: flex;
-        }
+        #countdownOverlay.show { display: flex; }
 
         #countdownNumber {
-            font-size: 150px;
+            font-size: 120px;
             font-weight: bold;
             color: #667eea;
             text-shadow: 0 0 50px rgba(102, 126, 234, 0.8);
@@ -226,301 +186,114 @@
         }
 
         @keyframes countdownPulse {
-            0% {
-                transform: scale(0.5);
-                opacity: 0;
-            }
-
-            50% {
-                transform: scale(1.2);
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         /* HUD */
         #hud {
             position: absolute;
-            top: max(10px, env(safe-area-inset-top));
-            left: max(10px, env(safe-area-inset-left));
+            top: 8px;
+            left: 8px;
             color: white;
             z-index: 1000;
             display: flex;
-            gap: 10px;
+            gap: 6px;
             flex-wrap: wrap;
+            max-width: 300px;
         }
 
         .hud-item {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(102, 126, 234, 0.5);
-        }
-
-        /* Circular Control Wheel */
-        #controlWheel {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            transform: none;
-            width: 180px;
-            height: 180px;
-            z-index: 1000;
-        }
-
-        .control-segment {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            clip-path: polygon(50% 50%, 100% 50%, 75% 6.7%);
-            transform-origin: center;
-            transition: all 0.1s;
-        }
-
-        .control-segment:active {
-            filter: brightness(1.3);
-        }
-
-        #accelSegment {
-            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
-            transform: rotate(0deg);
-            clip-path: polygon(50% 50%, 93.3% 25%, 93.3% 75%);
-        }
-
-        #brakeSegment {
-            background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
-            transform: rotate(180deg);
-            clip-path: polygon(50% 50%, 93.3% 25%, 93.3% 75%);
-        }
-
-        #leftSegment {
-            background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
-            transform: rotate(270deg);
-            clip-path: polygon(50% 50%, 93.3% 25%, 93.3% 75%);
-        }
-
-        #rightSegment {
-            background: linear-gradient(135deg, #ff9800 0%, #e65100 100%);
-            transform: rotate(90deg);
-            clip-path: polygon(50% 50%, 93.3% 25%, 93.3% 75%);
-        }
-
-        .control-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle, rgba(50, 50, 50, 0.9) 0%, rgba(20, 20, 20, 0.9) 100%);
-            border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 6px 12px;
+            border-radius: 6px;
             font-size: 12px;
-            text-align: center;
-            z-index: 10;
-        }
-
-        .control-label {
-            position: absolute;
-            color: white;
             font-weight: bold;
-            font-size: 16px;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
-            pointer-events: none;
-        }
-
-        #accelLabel {
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        #brakeLabel {
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        #leftLabel {
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        #rightLabel {
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
+            border: 2px solid rgba(102, 126, 234, 0.5);
+            white-space: nowrap;
         }
 
         /* Speedometer */
         #speedometer {
             position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 120px;
-            height: 120px;
+            bottom: 15px;
+            right: 15px;
+            width: 90px;
+            height: 90px;
             background: rgba(0, 0, 0, 0.8);
             border-radius: 50%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border: 4px solid #667eea;
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+            border: 3px solid #667eea;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
         }
 
         #speedValue {
-            font-size: 36px;
+            font-size: 28px;
             font-weight: bold;
             color: #667eea;
         }
 
         #speedUnit {
-            font-size: 12px;
+            font-size: 10px;
             color: white;
         }
 
         /* Gear Display */
         #gearDisplay {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 8px;
+            right: 8px;
             background: rgba(0, 0, 0, 0.8);
-            padding: 15px 25px;
-            border-radius: 10px;
-            border: 3px solid rgba(102, 126, 234, 0.5);
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: 2px solid rgba(102, 126, 234, 0.5);
             text-align: center;
         }
 
         #gearLabel {
             color: #aaa;
-            font-size: 12px;
+            font-size: 10px;
         }
 
         #currentGear {
             color: #667eea;
-            font-size: 48px;
+            font-size: 36px;
             font-weight: bold;
-            text-shadow: 0 0 20px rgba(102, 126, 234, 0.7);
         }
 
-        /* Nitro Button */
+        /* Nitro */
         #nitroButton {
             position: absolute;
-            top: 20px;
+            top: 15px;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
-            height: 50px;
+            width: 80px;
+            height: 40px;
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-            border-radius: 25px;
-            border: 3px solid rgba(255, 255, 255, 0.4);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
             font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
-        }
-
-        #nitroButton:active {
-            transform: translateX(-50%) scale(0.95);
-        }
-
-        /* Accelerate Button (Bottom Center) */
-        #accelButton {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120px;
-            height: 80px;
-            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
-            border-radius: 15px;
-            border: 3px solid rgba(76, 175, 80, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            font-size: 32px;
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
-            z-index: 1000;
-        }
-
-        #accelButton:active {
-            transform: translateX(-50%) scale(0.95);
-        }
-
-        /* Left Move Button */
-        #leftButton {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
-            border-radius: 50%;
-            border: 3px solid rgba(33, 150, 243, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            font-size: 32px;
-            box-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
-            z-index: 1000;
-        }
-
-        #leftButton:active {
-            transform: scale(0.95);
-        }
-
-        /* Right Move Button */
-        #rightButton {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #ff9800 0%, #e65100 100%);
-            border-radius: 50%;
-            border: 3px solid rgba(255, 152, 0, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            font-size: 32px;
-            box-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
-            z-index: 1000;
-        }
-
-        #rightButton:active {
-            transform: scale(0.95);
+            font-size: 13px;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
         }
 
         #nitroBar {
             position: absolute;
-            top: 75px;
+            top: 60px;
             left: 50%;
             transform: translateX(-50%);
-            width: 150px;
-            height: 15px;
+            width: 120px;
+            height: 12px;
             background: rgba(0, 0, 0, 0.7);
-            border-radius: 8px;
+            border-radius: 6px;
             border: 2px solid rgba(255, 107, 107, 0.5);
             overflow: hidden;
         }
@@ -532,6 +305,59 @@
             transition: width 0.3s;
         }
 
+        /* Controls - Bottom Layout */
+        #leftButton, #rightButton {
+            position: absolute;
+            bottom: 15px;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 26px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        #leftButton {
+            left: 15px;
+            background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
+        }
+
+        #rightButton {
+            right: 15px;
+            background: linear-gradient(135deg, #ff9800 0%, #e65100 100%);
+        }
+
+        #accelButton {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 70px;
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            border-radius: 12px;
+            border: 3px solid rgba(76, 175, 80, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+            z-index: 1000;
+        }
+
+        #accelButton .icon {
+            font-size: 26px;
+            margin-bottom: 2px;
+        }
+
         /* Game Over */
         #gameOver {
             position: fixed;
@@ -539,47 +365,43 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.95);
-            padding: 40px;
-            border-radius: 20px;
+            padding: 30px;
+            border-radius: 15px;
             text-align: center;
             display: none;
             z-index: 2000;
-            min-width: 300px;
+            min-width: 280px;
         }
 
-        #gameOver.show {
-            display: block;
-        }
+        #gameOver.show { display: block; }
 
         #gameOver h1 {
             color: #ff4444;
-            font-size: 36px;
-            margin-bottom: 20px;
+            font-size: 32px;
+            margin-bottom: 15px;
         }
 
         #gameOver p {
             color: white;
-            font-size: 20px;
-            margin: 10px 0;
+            font-size: 18px;
+            margin: 8px 0;
         }
 
         .restart-btn {
-            padding: 15px 40px;
-            margin-top: 20px;
+            padding: 12px 35px;
+            margin-top: 15px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 18px;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: bold;
-            cursor: pointer;
         }
 
         /* Level Complete */
         #levelComplete {
             position: fixed;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0, 0, 0, 0.9);
             display: none;
             justify-content: center;
@@ -588,320 +410,99 @@
             flex-direction: column;
         }
 
-        #levelComplete.show {
-            display: flex;
-        }
+        #levelComplete.show { display: flex; }
 
         .level-complete-content {
             text-align: center;
             color: white;
+            padding: 20px;
         }
 
         .level-complete-content h1 {
-            font-size: 48px;
+            font-size: 38px;
             color: #4caf50;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .level-complete-content p {
-            font-size: 24px;
-            margin: 10px 0;
+            font-size: 20px;
+            margin: 8px 0;
         }
 
         .reward-item {
             background: rgba(255, 215, 0, 0.2);
             border: 2px solid #ffd700;
-            border-radius: 10px;
-            padding: 15px 30px;
-            margin: 10px 0;
-            font-size: 20px;
+            border-radius: 8px;
+            padding: 12px 25px;
+            margin: 8px 0;
+            font-size: 18px;
             color: #ffd700;
         }
 
         .continue-btn {
-            padding: 15px 50px;
-            margin-top: 30px;
+            padding: 12px 40px;
+            margin-top: 20px;
             background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 20px;
+            border-radius: 8px;
+            font-size: 18px;
             font-weight: bold;
-            cursor: pointer;
         }
 
-        /* Combo Display */
+        /* Combo */
         #comboDisplay {
             position: absolute;
-            top: 100px;
-            left: 10px;
+            top: 80px;
+            left: 8px;
             background: rgba(255, 215, 0, 0.2);
             border: 2px solid #ffd700;
-            padding: 10px 20px;
-            border-radius: 10px;
+            padding: 8px 15px;
+            border-radius: 8px;
             color: #ffd700;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px;
             display: none;
         }
 
-        #comboDisplay.show {
-            display: block;
-        }
+        #comboDisplay.show { display: block; }
 
-        /* Mobile Responsive Adjustments */
-        @media (max-width: 768px) {
-
-            /* HUD - Stack vertically for smaller screens */
-            #hud {
-                top: max(10px, env(safe-area-inset-top));
-                left: max(10px, env(safe-area-inset-left));
-                flex-direction: column;
-                gap: 5px;
-            }
-
-            .hud-item {
-                padding: 5px 10px;
-                font-size: 12px;
-            }
-
-            /* Smaller buttons for small screens */
-            #leftButton,
-            #rightButton {
-                width: 70px;
-                height: 70px;
-                font-size: 28px;
-                bottom: 15px;
-            }
-
-            #leftButton {
-                left: 15px;
-            }
-
-            #rightButton {
-                right: 15px;
-            }
-
-            #accelButton {
-                width: 100px;
-                height: 70px;
-                font-size: 28px;
-                bottom: 15px;
-            }
-
-            /* Speedometer - smaller */
-            #speedometer {
-                width: 100px;
-                height: 100px;
-                bottom: 15px;
-                right: 15px;
-                border: 3px solid #667eea;
-            }
-
-            #speedValue {
-                font-size: 28px;
-            }
-
-            #speedUnit {
-                font-size: 10px;
-            }
-
-            /* Gear display - smaller */
-            #gearDisplay {
-                top: max(10px, env(safe-area-inset-top));
-                right: max(10px, env(safe-area-inset-right));
-                padding: 10px 15px;
-                border: 2px solid rgba(102, 126, 234, 0.5);
-            }
-
-            #gearLabel {
-                font-size: 10px;
-            }
-
-            #currentGear {
-                font-size: 36px;
-            }
-
-            /* Nitro bar - smaller */
-            #nitroBar {
-                width: 120px;
-                height: 12px;
-                top: 75px;
-            }
-
-            /* Nitro button - smaller */
-            #nitroButton {
-                width: 80px;
-                height: 40px;
-                font-size: 14px;
-            }
-
-            /* Combo display - adjust position */
-            #comboDisplay {
-                top: 80px;
-                left: max(10px, env(safe-area-inset-left));
-                font-size: 16px;
-                padding: 8px 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-
-            /* Extra small screens */
-            #hud {
-                flex-direction: row;
-                gap: 3px;
-                flex-wrap: wrap;
-            }
-
-            .hud-item {
-                padding: 4px 8px;
-                font-size: 11px;
-            }
-
-            #leftButton,
-            #rightButton {
-                width: 60px;
-                height: 60px;
-                font-size: 24px;
-                bottom: 10px;
-            }
-
-            #leftButton {
-                left: 10px;
-            }
-
-            #rightButton {
-                right: 10px;
-            }
-
-            #accelButton {
-                width: 90px;
-                height: 60px;
-                font-size: 24px;
-                bottom: 10px;
-            }
-
-            #speedometer {
-                width: 90px;
-                height: 90px;
-                bottom: 10px;
-                right: 10px;
-                border: 2px solid #667eea;
-            }
-
-            #speedValue {
-                font-size: 24px;
-            }
-
-            #speedUnit {
-                font-size: 9px;
-            }
-
-            #gearDisplay {
-                top: max(8px, env(safe-area-inset-top));
-                right: max(8px, env(safe-area-inset-right));
-                padding: 8px 12px;
-            }
-
-            #gearLabel {
-                font-size: 9px;
-            }
-
-            #currentGear {
-                font-size: 32px;
-            }
-
-            #nitroButton {
-                width: 70px;
-                height: 35px;
-                font-size: 12px;
-            }
-
-            #nitroBar {
-                width: 100px;
-                height: 10px;
-                top: 70px;
-            }
-
-            #comboDisplay {
-                top: 70px;
-                left: max(8px, env(safe-area-inset-left));
-                font-size: 14px;
-                padding: 6px 12px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-
-            /* Large screens - expand UI */
-            #leftButton,
-            #rightButton {
-                width: 100px;
-                height: 100px;
-                font-size: 36px;
-            }
-
-            #accelButton {
-                width: 140px;
-                height: 100px;
-                font-size: 32px;
-            }
-
-            #speedometer {
-                width: 140px;
-                height: 140px;
-                bottom: 30px;
-                right: 30px;
-            }
-
-            #speedValue {
-                font-size: 48px;
-            }
-
-            #gearDisplay {
-                padding: 20px 30px;
-            }
-
-            #currentGear {
-                font-size: 56px;
-            }
+        /* Smaller screens */
+        @media (max-height: 700px) {
+            #leftButton, #rightButton { width: 55px; height: 55px; font-size: 22px; }
+            #accelButton { width: 85px; height: 60px; }
+            #speedometer { width: 75px; height: 75px; }
+            #speedValue { font-size: 24px; }
+            #currentGear { font-size: 30px; }
         }
     </style>
 </head>
-
 <body>
-    <!-- Splash Screen -->
     <div id="splashScreen">
-        <img src="assets/logo.png" alt="Minz Logo" class="splash-logo" onerror="this.style.display='none'">
+        <img src="assets/logo.png" alt="Minz" class="splash-logo" onerror="this.style.display='none'">
         <div class="splash-title">MINZ</div>
         <div class="splash-loading">Loading...</div>
     </div>
 
-    <!-- Orientation Warning -->
     <div id="orientationWarning">
         <div class="rotate-icon">📱</div>
-        <h1>Please Rotate Your Device</h1>
-        <p>This game is best played in landscape mode</p>
+        <h1>Rotate Your Device</h1>
+        <p>Play in landscape mode</p>
     </div>
 
-    <!-- Login Screen -->
     <div id="loginScreen">
         <div class="login-container">
             <div class="game-logo">MINZ</div>
             <div class="game-tagline">Ultimate Street Racing</div>
-            <input type="text" id="usernameInput" class="login-input" placeholder="Enter your racer name" maxlength="20"
-                autofocus inputmode="text">
+            <input type="text" id="usernameInput" class="login-input" placeholder="Enter racer name" maxlength="20">
             <button onclick="handleLogin()" class="login-btn">START ENGINE</button>
         </div>
     </div>
 
-    <!-- Countdown -->
     <div id="countdownOverlay">
         <div id="countdownNumber">3</div>
     </div>
 
-    <!-- Level Complete -->
     <div id="levelComplete">
         <div class="level-complete-content">
             <h1>LEVEL COMPLETE!</h1>
@@ -913,57 +514,32 @@
         </div>
     </div>
 
-    <!-- HUD -->
     <div id="hud">
         <div class="hud-item" id="playerName"></div>
         <div class="hud-item">SCORE: <span id="score">0</span></div>
         <div class="hud-item">COINS: <span id="coins">0</span></div>
         <div class="hud-item">LEVEL: <span id="level">1</span></div>
-        <div class="hud-item" id="gyroStatus">📱 GYRO: OFF</div>
     </div>
 
-    <!-- Combo Display -->
-    <div id="comboDisplay">
-        COMBO x<span id="comboMultiplier">1</span>
-    </div>
+    <div id="comboDisplay">COMBO x<span id="comboMultiplier">1</span></div>
 
-    <!-- Nitro -->
     <div id="nitroButton">🔥 NITRO</div>
-    <div id="nitroBar">
-        <div id="nitroFill"></div>
-    </div>
+    <div id="nitroBar"><div id="nitroFill"></div></div>
 
-    <!-- Speedometer -->
     <div id="speedometer">
         <div id="speedValue">0</div>
         <div id="speedUnit">KM/H</div>
     </div>
 
-    <!-- Gear Display -->
     <div id="gearDisplay">
         <div id="gearLabel">GEAR</div>
         <div id="currentGear">N</div>
     </div>
 
-    <!-- Circular Control Wheel (Hidden - kept for reference) -->
-    <div id="controlWheel" style="display: none;">
-        <div id="accelSegment" class="control-segment"></div>
-        <div id="brakeSegment" class="control-segment"></div>
-        <div id="leftSegment" class="control-segment"></div>
-        <div id="rightSegment" class="control-segment"></div>
-        <div class="control-center">MINZ</div>
-        <div id="accelLabel" class="control-label">⬆</div>
-        <div id="brakeLabel" class="control-label">⬇</div>
-        <div id="leftLabel" class="control-label">⬅</div>
-        <div id="rightLabel" class="control-label">➡</div>
-    </div>
-
-    <!-- New Reorganized Controls -->
     <div id="leftButton">⬅</div>
-    <div id="accelButton">⬆ ACCEL</div>
+    <div id="accelButton"><div class="icon">⬆</div><div>ACCEL</div></div>
     <div id="rightButton">➡</div>
 
-    <!-- Game Over -->
     <div id="gameOver">
         <h1>RACE FINISHED</h1>
         <p>Final Score: <span id="finalScore">0</span></p>
@@ -973,15 +549,6 @@
     </div>
 
     <script>
-        // Mobile detection & setup
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isTouch = () => (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
-        let userHasInteracted = false;
-
-        // Track user gesture for iOS audio autoplay
-        document.addEventListener('touchstart', () => { userHasInteracted = true; }, { once: true });
-        document.addEventListener('click', () => { userHasInteracted = true; }, { once: true });
-
         let scene, camera, renderer;
         let car, wheels = [];
         let bgmAudio, crashAudio;
@@ -989,8 +556,8 @@
         let playerData = { username: '', highScore: 0, totalRaces: 0, coins: 0 };
         let gameState = {
             speed: 0,
-            maxSpeed: 2.5,
-            acceleration: 0.015,
+            maxSpeed: 2.0,
+            acceleration: 0.012,
             braking: false,
             steering: 0,
             carX: 0,
@@ -1005,13 +572,13 @@
             countdownActive: false,
             score: 0,
             level: 1,
-            levelProgress: 0,
-            levelTarget: 300,
+            levelTarget: 500,
             combo: 0,
             comboTimer: 0
         };
 
-        // Splash screen timeout
+        let gyroEnabled = false;
+
         setTimeout(() => {
             document.getElementById('splashScreen').classList.add('hidden');
             document.getElementById('loginScreen').classList.add('show');
@@ -1035,15 +602,7 @@
                 return;
             }
 
-            // Vibration feedback on mobile
-            if (navigator.vibrate) {
-                navigator.vibrate(100);
-            }
-
-            // Resume audio after user gesture
-            if (bgmAudio && bgmAudio.paused) {
-                bgmAudio.play().catch(e => console.log('Audio play failed'));
-            }
+            if (navigator.vibrate) navigator.vibrate(50);
 
             playerData.username = username;
             loadPlayerData();
@@ -1052,6 +611,7 @@
             document.getElementById('coins').textContent = playerData.coins;
             checkOrientation();
             init();
+            setupGyroscope();
             startCountdown();
         }
 
@@ -1064,7 +624,7 @@
                     playerData.totalRaces = data.totalRaces || 0;
                     playerData.coins = data.coins || 0;
                 }
-            } catch (e) { }
+            } catch (e) {}
         }
 
         function savePlayerData() {
@@ -1074,7 +634,7 @@
                     totalRaces: playerData.totalRaces,
                     coins: playerData.coins
                 }));
-            } catch (e) { }
+            } catch (e) {}
         }
 
         function startCountdown() {
@@ -1109,18 +669,51 @@
             }, 1000);
         }
 
+        function setupGyroscope() {
+            if (typeof DeviceOrientationEvent !== 'undefined') {
+                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    DeviceOrientationEvent.requestPermission()
+                        .then(state => {
+                            if (state === 'granted') {
+                                gyroEnabled = true;
+                                window.addEventListener('deviceorientation', handleGyro);
+                                console.log('Gyro enabled (iOS)');
+                            }
+                        })
+                        .catch(console.error);
+                } else {
+                    gyroEnabled = true;
+                    window.addEventListener('deviceorientation', handleGyro);
+                    console.log('Gyro enabled (Android)');
+                }
+            }
+        }
+
+        function handleGyro(event) {
+            if (!gameState.gameStarted || gameState.countdownActive) return;
+            
+            const gamma = event.gamma || 0;
+            const threshold = 5;
+            const maxTilt = 20;
+            
+            if (Math.abs(gamma) > threshold) {
+                gameState.steering = Math.max(-1, Math.min(1, gamma / maxTilt));
+            } else {
+                if (!gameState.keys.left && !gameState.keys.right) {
+                    gameState.steering = 0;
+                }
+            }
+        }
+
         function init() {
             bgmAudio = new Audio('assets/bgm.mp3');
             bgmAudio.loop = true;
             bgmAudio.volume = 0.4;
-
+            
             crashAudio = new Audio('assets/crash.mp3');
             crashAudio.volume = 0.7;
-
-            // Attempt to play audio - will work if user has interacted with page
-            bgmAudio.play().catch(e => {
-                console.log('Audio autoplay blocked - will play on user interaction');
-            });
+            
+            bgmAudio.play().catch(e => console.log('Audio blocked'));
 
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x87ceeb);
@@ -1131,9 +724,11 @@
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio || 1);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.shadowMap.enabled = true;
-            document.body.appendChild(renderer.domElement); const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+            document.body.appendChild(renderer.domElement);
+
+            const ambient = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambient);
 
             const sun = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -1194,11 +789,7 @@
 
             const body = new THREE.Mesh(
                 new THREE.BoxGeometry(2.2, 0.8, 4.5),
-                new THREE.MeshStandardMaterial({
-                    color: 0xff0000,
-                    metalness: 0.9,
-                    roughness: 0.1
-                })
+                new THREE.MeshStandardMaterial({ color: 0xff0000, metalness: 0.9, roughness: 0.1 })
             );
             body.position.y = 0.6;
             body.castShadow = true;
@@ -1247,15 +838,15 @@
             const sparkGeometry = new THREE.BufferGeometry();
             const sparkCount = 15;
             const positions = new Float32Array(sparkCount * 3);
-
+            
             for (let i = 0; i < sparkCount; i++) {
                 positions[i * 3] = car.position.x + side * 1.2;
                 positions[i * 3 + 1] = 0.2 + Math.random() * 0.5;
                 positions[i * 3 + 2] = car.position.z - 1 + Math.random() * 2;
             }
-
+            
             sparkGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
+            
             const sparkMaterial = new THREE.PointsMaterial({
                 color: 0xffa500,
                 size: 0.2,
@@ -1263,25 +854,20 @@
                 opacity: 1,
                 blending: THREE.AdditiveBlending
             });
-
+            
             const sparks = new THREE.Points(sparkGeometry, sparkMaterial);
             scene.add(sparks);
-
-            sparkParticles.push({
-                mesh: sparks,
-                lifetime: 0.5,
-                age: 0
-            });
+            
+            sparkParticles.push({ mesh: sparks, lifetime: 0.5, age: 0 });
         }
 
         function updateSparks() {
             for (let i = sparkParticles.length - 1; i >= 0; i--) {
                 const spark = sparkParticles[i];
                 spark.age += 0.016;
-
                 spark.mesh.material.opacity = 1 - (spark.age / spark.lifetime);
                 spark.mesh.position.z += gameState.speed;
-
+                
                 if (spark.age >= spark.lifetime) {
                     scene.remove(spark.mesh);
                     sparkParticles.splice(i, 1);
@@ -1295,10 +881,10 @@
                     const height = 12 + Math.random() * 30;
                     const width = 4 + Math.random() * 5;
                     const depth = 6 + Math.random() * 8;
-
+                    
                     const building = new THREE.Mesh(
                         new THREE.BoxGeometry(width, height, depth),
-                        new THREE.MeshStandardMaterial({
+                        new THREE.MeshStandardMaterial({ 
                             color: new THREE.Color().setHSL(0.6, 0.2, 0.35 + Math.random() * 0.25)
                         })
                     );
@@ -1315,16 +901,16 @@
                         for (let w = 0; w < 3; w++) {
                             const window = new THREE.Mesh(
                                 new THREE.PlaneGeometry(0.7, 1.4),
-                                new THREE.MeshBasicMaterial({
-                                    color: Math.random() > 0.3 ? 0xffff99 : 0x222222
+                                new THREE.MeshBasicMaterial({ 
+                                    color: Math.random() > 0.3 ? 0xffff99 : 0x222222 
                                 })
                             );
                             window.position.set(
-                                building.position.x + (side > 0 ? -width / 2 - 0.01 : width / 2 + 0.01),
-                                building.position.y - height / 2 + h,
+                                building.position.x + (side > 0 ? -width/2 - 0.01 : width/2 + 0.01),
+                                building.position.y - height/2 + h,
                                 building.position.z + (w - 1) * 2
                             );
-                            window.rotation.y = side > 0 ? Math.PI / 2 : -Math.PI / 2;
+                            window.rotation.y = side > 0 ? Math.PI/2 : -Math.PI/2;
                             scene.add(window);
                         }
                     }
@@ -1334,17 +920,17 @@
 
         function spawnObstacles() {
             for (let i = 0; i < 8; i++) {
-                createObstacle(-30 - i * 30);
+                createObstacle(-30 - i * 35);
             }
         }
 
         function createObstacle(z) {
             const colors = [0x2196f3, 0x4caf50, 0xffeb3b, 0xff5722, 0x9c27b0, 0x00bcd4];
             const obstacleGroup = new THREE.Group();
-
+            
             const body = new THREE.Mesh(
                 new THREE.BoxGeometry(2, 1, 4),
-                new THREE.MeshStandardMaterial({
+                new THREE.MeshStandardMaterial({ 
                     color: colors[Math.floor(Math.random() * colors.length)],
                     metalness: 0.8,
                     roughness: 0.2
@@ -1374,113 +960,49 @@
             const rightButton = document.getElementById('rightButton');
             const nitroButton = document.getElementById('nitroButton');
 
-            let gyroEnabled = false;
-            let gyroAlpha = 0; // Tilt intensity
+            gameState.keys = { left: false, right: false };
 
-            // Touch/Mouse Controls for Buttons
-            function setupButtonControl(button, control) {
-                const startHandler = (e) => {
-                    e.preventDefault();
-                    if (control === 'accel') gameState.braking = false;
-                    else if (control === 'left') gameState.steering = -1;
-                    else if (control === 'right') gameState.steering = 1;
-                    else if (control === 'nitro' && gameState.nitro > 0 && gameState.gameStarted) {
-                        gameState.nitroActive = true;
-                        if (navigator.vibrate) navigator.vibrate(50);
-                    }
-                };
-
-                const endHandler = (e) => {
-                    e.preventDefault();
-                    if (control === 'left' || control === 'right') gameState.steering = 0;
-                    else if (control === 'nitro') gameState.nitroActive = false;
-                };
-
-                button.addEventListener('touchstart', startHandler, { passive: false });
-                button.addEventListener('mousedown', startHandler, { passive: false });
-                button.addEventListener('touchend', endHandler, { passive: false });
-                button.addEventListener('mouseup', endHandler, { passive: false });
-                button.addEventListener('touchcancel', endHandler, { passive: false });
+            function preventZoom(e) {
+                e.preventDefault();
+                e.stopPropagation();
             }
 
-            setupButtonControl(leftButton, 'left');
-            setupButtonControl(accelButton, 'accel');
-            setupButtonControl(rightButton, 'right');
-            setupButtonControl(nitroButton, 'nitro');
+            function setupButton(button, action, endAction) {
+                ['touchstart', 'mousedown'].forEach(event => {
+                    button.addEventListener(event, (e) => {
+                        preventZoom(e);
+                        action();
+                        if (navigator.vibrate) navigator.vibrate(30);
+                    }, { passive: false });
+                });
 
-            // Gyroscope/Device Tilt Controls
-            function requestPermission() {
-                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                    // iOS 13+ requires explicit permission
-                    DeviceOrientationEvent.requestPermission()
-                        .then(permissionState => {
-                            if (permissionState === 'granted') {
-                                gyroEnabled = true;
-                                window.addEventListener('deviceorientation', handleDeviceOrientation, true);
-                                document.getElementById('gyroStatus').textContent = '📱 GYRO: ON';
-                                if (navigator.vibrate) navigator.vibrate(100);
-                                console.log('✅ Gyroscope enabled on iOS');
-                            } else {
-                                document.getElementById('gyroStatus').textContent = '📱 GYRO: DENIED';
-                                console.log('❌ Gyroscope permission denied');
-                            }
-                        })
-                        .catch(err => {
-                            document.getElementById('gyroStatus').textContent = '📱 GYRO: ERROR';
-                            console.error('Gyroscope error:', err);
-                        });
-                } else if (typeof DeviceOrientationEvent !== 'undefined') {
-                    // Android doesn't require permission
-                    gyroEnabled = true;
-                    window.addEventListener('deviceorientation', handleDeviceOrientation, true);
-                    document.getElementById('gyroStatus').textContent = '📱 GYRO: ON';
-                    if (navigator.vibrate) navigator.vibrate(100);
-                    console.log('✅ Gyroscope enabled on Android');
-                } else {
-                    document.getElementById('gyroStatus').textContent = '📱 GYRO: N/A';
-                    console.log('⚠️ DeviceOrientation not supported on this device');
-                }
+                ['touchend', 'touchcancel', 'mouseup', 'mouseleave'].forEach(event => {
+                    button.addEventListener(event, (e) => {
+                        preventZoom(e);
+                        if (endAction) endAction();
+                    }, { passive: false });
+                });
             }
 
-            function handleDeviceOrientation(event) {
-                if (!gameState.gameStarted) return;
+            setupButton(leftButton, 
+                () => { gameState.keys.left = true; gameState.steering = -1; },
+                () => { gameState.keys.left = false; if (!gameState.keys.right && !gyroEnabled) gameState.steering = 0; }
+            );
 
-                const alpha = event.alpha || 0; // Z axis rotation (0-360)
-                const beta = event.beta || 0;   // X axis front-back tilt (-180 to 180)
-                const gamma = event.gamma || 0; // Y axis left-right tilt (-90 to 90)
+            setupButton(rightButton,
+                () => { gameState.keys.right = true; gameState.steering = 1; },
+                () => { gameState.keys.right = false; if (!gameState.keys.left && !gyroEnabled) gameState.steering = 0; }
+            );
 
-                console.log(`Gyro - Alpha: ${alpha.toFixed(1)}, Beta: ${beta.toFixed(1)}, Gamma: ${gamma.toFixed(1)}`);
+            setupButton(accelButton,
+                () => { gameState.braking = false; },
+                null
+            );
 
-                // Use gamma (left-right tilt) for steering
-                // Negative gamma = tilt left, Positive gamma = tilt right
-                const tiltThreshold = 8; // Dead zone - very sensitive
-                const maxTilt = 25; // Maximum tilt angle
-
-                if (Math.abs(gamma) > tiltThreshold) {
-                    // Normalize tilt to -1 to 1 range
-                    const tiltFactor = Math.max(-1, Math.min(1, gamma / maxTilt));
-                    gameState.steering = tiltFactor;
-                    console.log(`Steering from gyro: ${tiltFactor.toFixed(2)}`);
-                } else {
-                    gameState.steering = 0;
-                }
-            }
-
-            // Request gyroscope permission immediately
-            requestPermission();
-
-            // Also request on any user interaction (fallback)
-            document.addEventListener('touchstart', () => {
-                if (!gyroEnabled) {
-                    requestPermission();
-                }
-            }, { passive: true });
-
-            document.addEventListener('click', () => {
-                if (!gyroEnabled) {
-                    requestPermission();
-                }
-            }, { passive: true });
+            setupButton(nitroButton,
+                () => { if (gameState.nitro > 0 && gameState.gameStarted) gameState.nitroActive = true; },
+                () => { gameState.nitroActive = false; }
+            );
         }
 
         function updateGear() {
@@ -1488,16 +1010,16 @@
             if (!gameState.gameStarted || speed < 5) {
                 gameState.gear = 0;
                 document.getElementById('currentGear').textContent = 'N';
-            } else if (speed < 50) {
+            } else if (speed < 40) {
                 gameState.gear = 1;
                 document.getElementById('currentGear').textContent = '1';
-            } else if (speed < 100) {
+            } else if (speed < 80) {
                 gameState.gear = 2;
                 document.getElementById('currentGear').textContent = '2';
-            } else if (speed < 150) {
+            } else if (speed < 120) {
                 gameState.gear = 3;
                 document.getElementById('currentGear').textContent = '3';
-            } else if (speed < 200) {
+            } else if (speed < 160) {
                 gameState.gear = 4;
                 document.getElementById('currentGear').textContent = '4';
             } else {
@@ -1523,59 +1045,49 @@
             document.getElementById('comboDisplay').classList.add('show');
         }
 
-        function updateLevelProgress() {
-            const progress = (gameState.score / gameState.levelTarget) * 100;
-            gameState.levelProgress = Math.min(progress, 100);
-
-            if (gameState.levelProgress >= 100) {
-                completeLevel();
-            }
-        }
-
         function completeLevel() {
             gameState.gameStarted = false;
             gameState.countdownActive = false;
             gameState.speed = 0;
-
+            
             const coinReward = gameState.level * 100;
             const xpReward = gameState.level * 50;
-
+            
             playerData.coins += coinReward;
             document.getElementById('coins').textContent = playerData.coins;
-
+            
             document.getElementById('completedLevel').textContent = gameState.level;
             document.getElementById('levelScore').textContent = gameState.score;
             document.getElementById('coinReward').textContent = coinReward;
             document.getElementById('xpReward').textContent = xpReward;
             document.getElementById('levelComplete').classList.add('show');
-
+            
             savePlayerData();
         }
 
         function continueToNextLevel() {
             document.getElementById('levelComplete').classList.remove('show');
-
+            
             gameState.level++;
-            gameState.levelProgress = 0;
-            gameState.levelTarget = 300 + (gameState.level - 1) * 200;
-            gameState.maxSpeed = Math.min(2.5 + (gameState.level - 1) * 0.2, 4);
+            gameState.levelTarget = 500 + (gameState.level - 1) * 300;
+            gameState.maxSpeed = Math.min(2.0 + (gameState.level - 1) * 0.15, 3.5);
             gameState.carX = 0;
             car.position.x = 0;
-
+            
             document.getElementById('level').textContent = gameState.level;
-
+            
             gameState.obstacles.forEach(obs => {
                 const lane = (Math.floor(Math.random() * 3) - 1) * 4;
                 obs.position.x = lane;
-                obs.position.z = -30 - Math.random() * 200;
+                obs.position.z = -30 - Math.random() * 250;
             });
-
+            
             startCountdown();
         }
 
         function resetGame() {
             document.getElementById('gameOver').classList.remove('show');
-
+            
             gameState.gameOver = false;
             gameState.speed = 0;
             gameState.score = 0;
@@ -1583,36 +1095,30 @@
             gameState.carX = 0;
             gameState.gear = 0;
             gameState.nitro = 100;
-            gameState.levelProgress = 0;
-            gameState.levelTarget = 300;
+            gameState.levelTarget = 500;
             gameState.combo = 0;
             car.position.x = 0;
-
+            
             playerData.totalRaces++;
             savePlayerData();
-
+            
             document.getElementById('score').textContent = '0';
             document.getElementById('level').textContent = '1';
             document.getElementById('speedValue').textContent = '0';
-
+            
             gameState.obstacles.forEach(obs => {
                 const lane = (Math.floor(Math.random() * 3) - 1) * 4;
                 obs.position.x = lane;
-                obs.position.z = -30 - Math.random() * 200;
+                obs.position.z = -30 - Math.random() * 250;
             });
-
+            
             startCountdown();
         }
 
         function animate() {
             requestAnimationFrame(animate);
 
-            if (gameState.gameOver) {
-                renderer.render(scene, camera);
-                return;
-            }
-
-            if (gameState.countdownActive || !gameState.gameStarted) {
+            if (gameState.gameOver || gameState.countdownActive || !gameState.gameStarted) {
                 renderer.render(scene, camera);
                 return;
             }
@@ -1621,27 +1127,27 @@
             if (!gameState.braking) {
                 let maxSpeed = gameState.maxSpeed;
                 if (gameState.nitroActive && gameState.nitro > 0) {
-                    maxSpeed = gameState.maxSpeed * 1.6;
+                    maxSpeed = gameState.maxSpeed * 1.5;
                     gameState.nitro = Math.max(0, gameState.nitro - 0.5);
                 } else {
-                    gameState.nitro = Math.min(100, gameState.nitro + 0.1);
+                    gameState.nitro = Math.min(100, gameState.nitro + 0.08);
                 }
                 gameState.speed = Math.min(gameState.speed + gameState.acceleration, maxSpeed);
             } else {
-                gameState.speed = Math.max(gameState.speed - 0.08, 0);
+                gameState.speed = Math.max(gameState.speed - 0.06, 0);
             }
 
             document.getElementById('nitroFill').style.width = gameState.nitro + '%';
 
             // Steering
-            gameState.carX += gameState.steering * 0.3;
+            gameState.carX += gameState.steering * 0.25;
             gameState.carX = Math.max(-5.5, Math.min(5.5, gameState.carX));
             car.position.x = gameState.carX;
-            car.rotation.y = -gameState.steering * 0.15;
+            car.rotation.y = -gameState.steering * 0.12;
 
-            // Spark effects when near edge
+            // Spark effects
             if (Math.abs(gameState.carX) > 5 && gameState.speed > 0.5) {
-                if (Math.random() < 0.3) {
+                if (Math.random() < 0.25) {
                     createSparkEffect(gameState.carX > 0 ? 1 : -1);
                 }
             }
@@ -1649,7 +1155,11 @@
             updateSparks();
             updateGear();
             updateCombo();
-            updateLevelProgress();
+
+            // Check level completion
+            if (gameState.score >= gameState.levelTarget) {
+                completeLevel();
+            }
 
             wheels.forEach(w => w.rotation.x -= gameState.speed * 0.4);
 
@@ -1664,20 +1174,20 @@
             });
 
             gameState.obstacles.forEach(obs => {
-                obs.position.z += gameState.speed + 0.5;
-
+                obs.position.z += gameState.speed + 0.4;
+                
                 if (obs.position.z > 20) {
-                    obs.position.z = -200;
+                    obs.position.z = -250;
                     const lane = (Math.floor(Math.random() * 3) - 1) * 4;
                     obs.position.x = lane;
-
-                    const baseScore = 15;
+                    
+                    const baseScore = 20;
                     const comboScore = baseScore * (gameState.combo + 1);
                     gameState.score += comboScore;
                     document.getElementById('score').textContent = gameState.score;
-
+                    
                     addCombo();
-
+                    
                     if (gameState.score > playerData.highScore) {
                         playerData.highScore = gameState.score;
                         savePlayerData();
@@ -1690,11 +1200,8 @@
                     gameState.gameOver = true;
                     gameState.gameStarted = false;
                     gameState.speed = 0;
-
-                    // Vibration feedback on crash
-                    if (navigator.vibrate) {
-                        navigator.vibrate([100, 50, 100]);
-                    }
+                    
+                    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
 
                     bgmAudio.pause();
                     crashAudio.currentTime = 0;
@@ -1703,14 +1210,14 @@
 
                     document.getElementById('finalScore').textContent = gameState.score;
                     document.getElementById('finalCoins').textContent = playerData.coins;
-                    document.getElementById('highScoreText').textContent =
+                    document.getElementById('highScoreText').textContent = 
                         gameState.score >= playerData.highScore ? 'NEW RECORD!' : 'Best: ' + playerData.highScore;
                     document.getElementById('gameOver').classList.add('show');
                 }
             });
 
             document.getElementById('speedValue').textContent = Math.round(gameState.speed * 100);
-
+            
             camera.position.x += (car.position.x - camera.position.x) * 0.1;
             camera.position.z = car.position.z + 10;
             camera.lookAt(car.position.x, car.position.y + 1, car.position.z - 15);
@@ -1719,5 +1226,4 @@
         }
     </script>
 </body>
-
 </html>
